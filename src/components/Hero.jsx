@@ -29,6 +29,7 @@ export default function Hero({ searchQuery, setSearchQuery, activeCategory, setA
               key={category}
               className={`category-pill glass ${activeCategory === category ? 'active' : ''}`}
               onClick={() => setActiveCategory(category)}
+              aria-pressed={activeCategory === category}
             >
               {category}
             </button>

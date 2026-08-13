@@ -1,0 +1,17 @@
+{
+  "name": "MugenWall",
+  "short_name": "MugenWall",
+  "description": "Premium 4K Wallpapers for your devices.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d0b0a",
+  "theme_color": "#0d0b0a",
+  "icons": [
+    {
+      "src": "/mugen.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

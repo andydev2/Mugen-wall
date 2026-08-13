@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import WallpaperModal from './WallpaperModal';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import AdBanner from './AdBanner';
 import './Gallery.css';
+
+const WallpaperModal = lazy(() => import('./WallpaperModal'));
 
 export default function Gallery({ searchQuery, activeCategory }) {
   const [wallpapers, setWallpapers] = useState([]);
@@ -299,10 +300,12 @@ export default function Gallery({ searchQuery, activeCategory }) {
       )}
 
       {isModalOpen && selectedWallpaper && (
-        <WallpaperModal 
-          wallpaper={selectedWallpaper} 
-          onClose={handleCloseModal} 
-        />
+        <Suspense fallback={null}>
+          <WallpaperModal 
+            wallpaper={selectedWallpaper} 
+            onClose={handleCloseModal} 
+          />
+        </Suspense>
       )}
     </section>
   );
