@@ -239,8 +239,8 @@ export default function Gallery({ searchQuery, activeCategory }) {
               <img 
                 src={wallpaper.thumbs?.large || wallpaper.path} 
                 alt={`Wallpaper ${wallpaper.id}`}
-                fetchPriority={index === 0 ? "high" : "auto"}
-                loading={index === 0 ? "eager" : "lazy"}
+                fetchPriority={index <= 3 ? "high" : "auto"}
+                loading={index <= 3 ? "eager" : "lazy"}
                 decoding="async"
                 referrerPolicy="no-referrer"
                 width={wallpaper.dimension_x}
