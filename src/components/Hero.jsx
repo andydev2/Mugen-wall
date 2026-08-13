@@ -12,8 +12,11 @@ export default function Hero({ searchQuery, setSearchQuery, activeCategory, setA
         <p>Premium aesthetics for your devices. Download in maximum quality.</p>
         <div className="search-bar glass">
           <Search size={20} color="var(--color-primary)" />
+          <label htmlFor="search-input" className="sr-only">Search wallpapers</label>
           <input 
-            type="text" 
+            id="search-input"
+            name="search-query"
+            type="search" 
             placeholder="Search wallpapers..." 
             aria-label="Search wallpapers"
             value={searchQuery}

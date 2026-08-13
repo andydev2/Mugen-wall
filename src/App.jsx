@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Hero from './components/Hero';
 import Gallery from './components/Gallery';
+import Footer from './components/Footer';
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,6 +23,7 @@ function App() {
           activeCategory={activeCategory} 
         />
       </main>
+      {activeCategory !== 'All' && <Footer />}
     </div>
   );
 }

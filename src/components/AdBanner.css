@@ -16,30 +16,30 @@
   position: absolute;
   top: 4px;
   left: 8px;
-  font-size: 0.55rem;
-  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.75); /* Improved contrast */
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 .ad-placeholder-content {
   text-align: center;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.9); /* Improved contrast */
 }
 
 .ad-placeholder-content p {
   font-weight: 600;
   font-size: 1.2rem;
   margin: 0 0 4px 0;
-  background: var(--gradient-primary);
+  background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 .ad-earn {
-  font-size: 0.8rem;
-  opacity: 0.7;
+  font-size: 0.85rem;
+  opacity: 1; /* Improved contrast */
 }
 
 /* Formats */
