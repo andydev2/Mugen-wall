@@ -57,13 +57,49 @@ export default function Gallery({ searchQuery, activeCategory }) {
         
         const json = await response.json();
         
-        if (isMounted && json.data) {
-          if (activeCategory === 'All' && currentPage > 1) {
-            setWallpapers(prev => [...prev, ...json.data]);
-          } else {
-            setWallpapers(json.data);
+        let dataToSet = [];
+        let newTotalPages = 1;
+
+        if (json.data && json.data.length > 0) {
+          dataToSet = json.data;
+          newTotalPages = json.meta?.last_page || 1;
+        } else if (q) {
+          // Fallback to Pixabay
+          const pixabayKey = import.meta.env.VITE_PIXABAY_API_KEY;
+          if (pixabayKey) {
+            const pxUrl = `https://pixabay.com/api/?key=${pixabayKey}&q=${encodeURIComponent(q.trim())}&image_type=photo&orientation=horizontal&page=${currentPage}&per_page=24&safesearch=true`;
+            try {
+              const pxResponse = await fetch(pxUrl);
+              if (pxResponse.ok) {
+                const pxJson = await pxResponse.json();
+                if (pxJson.hits && pxJson.hits.length > 0) {
+                  dataToSet = pxJson.hits.map(item => ({
+                    id: `px-${item.id}`,
+                    path: item.largeImageURL,
+                    thumbs: { large: item.webformatURL },
+                    dimension_x: item.imageWidth,
+                    dimension_y: item.imageHeight,
+                    category: 'Photo',
+                    resolution: `${item.imageWidth}x${item.imageHeight}`,
+                    file_size: item.imageSize,
+                    title: item.tags,
+                  }));
+                  newTotalPages = Math.ceil(pxJson.totalHits / 24);
+                }
+              }
+            } catch (pxErr) {
+              console.error("Pixabay fallback error:", pxErr);
+            }
           }
-          setTotalPages(json.meta?.last_page || 1);
+        }
+        
+        if (isMounted) {
+          if (activeCategory === 'All' && currentPage > 1) {
+            setWallpapers(prev => [...prev, ...dataToSet]);
+          } else {
+            setWallpapers(dataToSet);
+          }
+          setTotalPages(newTotalPages);
         }
       } catch (err) {
         console.error("API Error:", err);
