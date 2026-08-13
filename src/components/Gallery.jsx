@@ -64,31 +64,98 @@ export default function Gallery({ searchQuery, activeCategory }) {
           dataToSet = json.data;
           newTotalPages = json.meta?.last_page || 1;
         } else if (q) {
-          // Fallback to Pixabay
-          const pixabayKey = import.meta.env.VITE_PIXABAY_API_KEY;
-          if (pixabayKey) {
-            const pxUrl = `https://pixabay.com/api/?key=${pixabayKey}&q=${encodeURIComponent(q.trim())}&image_type=photo&orientation=horizontal&page=${currentPage}&per_page=24&safesearch=true`;
+          // Fallback 1: TMDB
+          const tmdbKey = import.meta.env.VITE_TMDB_API_KEY;
+          let tmdbFound = false;
+
+          if (tmdbKey) {
             try {
-              const pxResponse = await fetch(pxUrl);
-              if (pxResponse.ok) {
-                const pxJson = await pxResponse.json();
-                if (pxJson.hits && pxJson.hits.length > 0) {
-                  dataToSet = pxJson.hits.map(item => ({
-                    id: `px-${item.id}`,
-                    path: item.largeImageURL,
-                    thumbs: { large: item.webformatURL },
-                    dimension_x: item.imageWidth,
-                    dimension_y: item.imageHeight,
-                    category: 'Photo',
-                    resolution: `${item.imageWidth}x${item.imageHeight}`,
-                    file_size: item.imageSize,
-                    title: item.tags,
-                  }));
-                  newTotalPages = Math.ceil(pxJson.totalHits / 24);
+              const tmdbUrl = `https://api.themoviedb.org/3/search/multi?api_key=${tmdbKey}&query=${encodeURIComponent(q.trim())}&page=${currentPage}`;
+              const tmdbRes = await fetch(tmdbUrl);
+              if (tmdbRes.ok) {
+                const tmdbJson = await tmdbRes.json();
+                let backdrops = [];
+                
+                tmdbJson.results?.forEach(item => {
+                  if (item.backdrop_path) {
+                    backdrops.push({
+                       id: `tmdb-${item.id}`,
+                       path: `https://image.tmdb.org/t/p/original${item.backdrop_path}`,
+                       thumbs: { large: `https://image.tmdb.org/t/p/w780${item.backdrop_path}` },
+                       dimension_x: 3840,
+                       dimension_y: 2160,
+                       category: item.media_type === 'movie' ? 'Movie' : 'TV Show',
+                       resolution: '3840x2160',
+                       file_size: 2000000,
+                       title: item.title || item.name || 'TMDB Image'
+                    });
+                  } else if (item.known_for) {
+                    item.known_for.forEach(known => {
+                      if (known.backdrop_path) {
+                        backdrops.push({
+                           id: `tmdb-${known.id}`,
+                           path: `https://image.tmdb.org/t/p/original${known.backdrop_path}`,
+                           thumbs: { large: `https://image.tmdb.org/t/p/w780${known.backdrop_path}` },
+                           dimension_x: 3840,
+                           dimension_y: 2160,
+                           category: 'Actor/Movie',
+                           resolution: '3840x2160',
+                           file_size: 2000000,
+                           title: known.title || known.name || 'TMDB Image'
+                        });
+                      }
+                    });
+                  }
+                });
+
+                // Remove potential duplicates (if multiple actors are known for the same movie)
+                const uniqueBackdrops = [];
+                const seenIds = new Set();
+                for (const item of backdrops) {
+                  if (!seenIds.has(item.id)) {
+                    seenIds.add(item.id);
+                    uniqueBackdrops.push(item);
+                  }
+                }
+
+                if (uniqueBackdrops.length > 0) {
+                  dataToSet = uniqueBackdrops;
+                  newTotalPages = tmdbJson.total_pages || 1;
+                  tmdbFound = true;
                 }
               }
-            } catch (pxErr) {
-              console.error("Pixabay fallback error:", pxErr);
+            } catch (err) {
+              console.error("TMDB fallback error:", err);
+            }
+          }
+
+          // Fallback 2: Pixabay (if TMDB found nothing)
+          if (!tmdbFound) {
+            const pixabayKey = import.meta.env.VITE_PIXABAY_API_KEY;
+            if (pixabayKey) {
+              const pxUrl = `https://pixabay.com/api/?key=${pixabayKey}&q=${encodeURIComponent(q.trim())}&image_type=photo&orientation=horizontal&page=${currentPage}&per_page=24&safesearch=true`;
+              try {
+                const pxResponse = await fetch(pxUrl);
+                if (pxResponse.ok) {
+                  const pxJson = await pxResponse.json();
+                  if (pxJson.hits && pxJson.hits.length > 0) {
+                    dataToSet = pxJson.hits.map(item => ({
+                      id: `px-${item.id}`,
+                      path: item.largeImageURL,
+                      thumbs: { large: item.webformatURL },
+                      dimension_x: item.imageWidth,
+                      dimension_y: item.imageHeight,
+                      category: 'Photo',
+                      resolution: `${item.imageWidth}x${item.imageHeight}`,
+                      file_size: item.imageSize,
+                      title: item.tags,
+                    }));
+                    newTotalPages = Math.ceil(pxJson.totalHits / 24);
+                  }
+                }
+              } catch (pxErr) {
+                console.error("Pixabay fallback error:", pxErr);
+              }
             }
           }
         }
