@@ -1,0 +1,80 @@
+.device-preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.device-toggles {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.toggle-btn {
+  background: var(--color-surface);
+  color: var(--color-secondary);
+  border: 1px solid transparent;
+  padding: 10px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-primary);
+}
+
+.toggle-btn.active {
+  background: var(--color-accent-2);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.preview-wrapper {
+  width: 100%;
+  height: 40vh; /* Fixed height for the preview area */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.preview-frame {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 4px solid #333; /* Dark device bezel */
+  background: #000;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Aspect Ratios */
+.frame-desktop {
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 16 / 9;
+}
+
+.frame-tablet {
+  height: 100%;
+  aspect-ratio: 3 / 4;
+}
+
+.frame-mobile {
+  height: 100%;
+  aspect-ratio: 9 / 19.5;
+  border-radius: 24px; /* Mobile devices have rounder corners */
+}

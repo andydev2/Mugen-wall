@@ -1,0 +1,104 @@
+
+:root {
+  --color-bg: #0d0b0a; /* Very dark brown/black */
+  --color-surface: rgba(102, 73, 48, 0.15); /* #664930 with opacity */
+  --color-surface-hover: rgba(153, 126, 103, 0.25); /* #997E67 with opacity */
+  
+  --color-primary: #FFDBBB;
+  --color-secondary: #CCBEB1;
+  --color-accent-1: #997E67;
+  --color-accent-2: #664930;
+
+  --font-sans: 'Inter', sans-serif;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+p {
+  color: var(--color-secondary);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* Glassmorphism Utilities */
+.glass {
+  background: rgba(102, 73, 48, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 219, 187, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.glass-card {
+  background: rgba(153, 126, 103, 0.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(204, 190, 177, 0.15);
+  border-radius: var(--radius-lg);
+  transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  background: rgba(153, 126, 103, 0.2);
+  border-color: rgba(255, 219, 187, 0.3);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Dialog Reset */
+dialog {
+  display: block; /* Needed for transition on open/close if using display */
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  max-width: unset;
+  max-height: unset;
+  margin: auto; /* Center it */
+}
+
+/* When dialog is closed, hide it */
+dialog:not([open]) {
+  display: none;
+}
+
+/* Dialog Backdrop */
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+}
