@@ -10,6 +10,18 @@ export default defineConfig({
         target: 'https://wallhaven.cc',
         changeOrigin: true,
         secure: false,
+      },
+      '/w-image': {
+        target: 'https://w.wallhaven.cc',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/w-image/, ''),
+        secure: false,
+      },
+      '/th-image': {
+        target: 'https://th.wallhaven.cc',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/th-image/, ''),
+        secure: false,
       }
     }
   },
@@ -18,6 +30,18 @@ export default defineConfig({
       '/api': {
         target: 'https://wallhaven.cc',
         changeOrigin: true,
+        secure: false,
+      },
+      '/w-image': {
+        target: 'https://w.wallhaven.cc',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/w-image/, ''),
+        secure: false,
+      },
+      '/th-image': {
+        target: 'https://th.wallhaven.cc',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/th-image/, ''),
         secure: false,
       }
     }

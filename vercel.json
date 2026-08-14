@@ -3,6 +3,14 @@
     {
       "source": "/api/v1/:match*",
       "destination": "https://wallhaven.cc/api/v1/:match*"
+    },
+    {
+      "source": "/w-image/:match*",
+      "destination": "https://w.wallhaven.cc/:match*"
+    },
+    {
+      "source": "/th-image/:match*",
+      "destination": "https://th.wallhaven.cc/:match*"
     }
   ]
 }
