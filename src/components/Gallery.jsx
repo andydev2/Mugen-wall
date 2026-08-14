@@ -207,7 +207,42 @@ export default function Gallery({ searchQuery, activeCategory }) {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedWallpaper(null);
+    window.history.pushState(null, '', window.location.pathname);
   };
+
+  // Check URL on mount for direct wallpaper link
+  useEffect(() => {
+    const checkUrlForWallpaper = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const wId = urlParams.get('w');
+      
+      if (wId && !wId.startsWith('tmdb-') && !wId.startsWith('px-')) {
+        try {
+          const res = await fetch(`/api/v1/w/${wId}`);
+          if (res.ok) {
+            const json = await res.json();
+            if (json.data) {
+              handleOpenModal(json.data);
+            }
+          }
+        } catch (err) {
+          console.error("Failed to load direct wallpaper:", err);
+        }
+      } else if (!wId) {
+        setIsModalOpen(false);
+        setSelectedWallpaper(null);
+      }
+    };
+
+    checkUrlForWallpaper();
+
+    const handlePopState = () => {
+      checkUrlForWallpaper();
+    };
+    
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const isPaginated = activeCategory !== 'All';
 
@@ -222,19 +257,16 @@ export default function Gallery({ searchQuery, activeCategory }) {
           <div className="no-results">No wallpapers found. Try a different search or category.</div>
         ) : (
           wallpapers.map((wallpaper, index) => (
-            <div 
+            <a 
+              href={`/?w=${wallpaper.id}`}
               key={`${wallpaper.id}-${index}`} 
               className="gallery-item glass-card animate-fade-in"
               style={{ animationDelay: `${(index % 24) * 0.05}s` }}
-              role="button"
-              tabIndex={0}
               aria-label={`View wallpaper ${wallpaper.id}`}
-              onClick={() => handleOpenModal(wallpaper)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  handleOpenModal(wallpaper);
-                }
+              onClick={(e) => {
+                e.preventDefault();
+                window.history.pushState(null, '', `/?w=${wallpaper.id}`);
+                handleOpenModal(wallpaper);
               }}
             >
               <img 
@@ -257,7 +289,7 @@ export default function Gallery({ searchQuery, activeCategory }) {
                   <span className="tag glass">{(wallpaper.file_size / 1024 / 1024).toFixed(1)} MB</span>
                 </div>
               </div>
-            </div>
+            </a>
           ))
         )}
       </div>
