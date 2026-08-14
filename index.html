@@ -41,12 +41,13 @@
     <link rel="apple-touch-icon" href="/mugen.svg">
 
     <!-- Performance Optimizations -->
-    <link rel="preconnect" href="https://w.wallhaven.cc" crossorigin>
-    <link rel="dns-prefetch" href="https://w.wallhaven.cc">
     <link rel="preconnect" href="https://th.wallhaven.cc" crossorigin>
     <link rel="dns-prefetch" href="https://th.wallhaven.cc">
     <link rel="preconnect" href="https://image.tmdb.org" crossorigin>
     <link rel="preconnect" href="https://pixabay.com" crossorigin>
+    
+    <!-- Preload initial API request for massive LCP boost -->
+    <link rel="preload" href="/api/v1/search?q=&amp;categories=111&amp;purity=100&amp;sorting=toplist&amp;page=1" as="fetch" crossorigin="anonymous">
 
     <!-- Monetization: Google AdSense (Lighthouse 100% Hack) -->
     <script>
