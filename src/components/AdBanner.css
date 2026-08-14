@@ -1,6 +1,6 @@
 .ad-banner {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px dashed rgba(255, 255, 255, 0.15);
+  background: var(--glass-card-bg);
+  border: 1px dashed var(--color-secondary);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -17,14 +17,14 @@
   top: 4px;
   left: 8px;
   font-size: 0.6rem;
-  color: rgba(255, 255, 255, 0.75); /* Improved contrast */
+  color: var(--color-secondary);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 .ad-placeholder-content {
   text-align: center;
-  color: rgba(255, 255, 255, 0.9); /* Improved contrast */
+  color: var(--color-primary);
 }
 
 .ad-placeholder-content p {

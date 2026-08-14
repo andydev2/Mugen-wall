@@ -1,0 +1,77 @@
+.theme-toggle {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--glass-card-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 9999;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  color: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1) rotate(5deg);
+  background: var(--glass-card-bg-hover);
+  border-color: var(--glass-card-border-hover);
+}
+
+.theme-toggle:active {
+  transform: scale(0.95);
+}
+
+.theme-toggle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Sun/Moon Animation from modern SVG pattern */
+.sun-and-moon > :is(.moon, .sun, .sun-beams) {
+  transform-origin: center center;
+  transition: transform 0.5s cubic-bezier(0.5, 1.25, 0.75, 1.25),
+              opacity 0.5s cubic-bezier(0.25, 0, 0.3, 1),
+              fill 0.5s cubic-bezier(0.25, 0, 0.3, 1);
+}
+
+.sun-and-moon > .sun-beams {
+  stroke-width: 2px;
+}
+
+/* Dark Mode (Default) - Shows Sun */
+.is-dark .sun-and-moon > .sun {
+  transform: scale(1.75);
+}
+.is-dark .sun-and-moon > .sun-beams {
+  opacity: 0;
+}
+.is-dark .sun-and-moon > .moon > circle {
+  transform: translateX(-7px);
+}
+@supports (cx: 1) {
+  .is-dark .sun-and-moon > .moon > circle {
+    transform: translateX(0);
+    cx: 17;
+  }
+}
+
+/* Light Mode - Shows Moon */
+.is-light .sun-and-moon > .sun {
+  transform: scale(1);
+}
+.is-light .sun-and-moon > .sun-beams {
+  opacity: 1;
+  transform: rotate(90deg);
+}
+.is-light .sun-and-moon > .moon > circle {
+  transform: translateX(0);
+}

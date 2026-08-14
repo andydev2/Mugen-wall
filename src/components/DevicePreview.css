@@ -40,7 +40,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--glass-card-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-card-border);
   border-radius: var(--radius-lg);
   padding: 20px;
 }
@@ -49,10 +51,10 @@
   position: relative;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  border: 4px solid #333; /* Dark device bezel */
-  background: #000;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 30px var(--shadow-color);
+  border: 4px solid var(--color-surface-hover);
+  background: var(--color-bg);
+  transition: border-radius 0.4s ease, border-color 0.4s ease;
 }
 
 .preview-image {

@@ -15,7 +15,7 @@ export default function DevicePreview({ imageUrl, title }) {
           aria-label="Preview on Desktop"
           aria-pressed={device === 'desktop'}
         >
-          <Monitor size={20} />
+          <Monitor size={20} aria-hidden="true" />
         </button>
         <button 
           className={`toggle-btn ${device === 'tablet' ? 'active' : ''}`}
@@ -24,7 +24,7 @@ export default function DevicePreview({ imageUrl, title }) {
           aria-label="Preview on Tablet"
           aria-pressed={device === 'tablet'}
         >
-          <Tablet size={20} />
+          <Tablet size={20} aria-hidden="true" />
         </button>
         <button 
           className={`toggle-btn ${device === 'mobile' ? 'active' : ''}`}
@@ -33,13 +33,13 @@ export default function DevicePreview({ imageUrl, title }) {
           aria-label="Preview on Mobile"
           aria-pressed={device === 'mobile'}
         >
-          <Smartphone size={20} />
+          <Smartphone size={20} aria-hidden="true" />
         </button>
       </div>
 
       <div className="preview-wrapper">
         <div className={`preview-frame frame-${device}`}>
-          <img src={imageUrl} alt={title} className="preview-image" loading="lazy" decoding="async" referrerPolicy="no-referrer" />
+          <img src={imageUrl} alt={title || "Preview image"} className="preview-image" fetchPriority="high" loading="eager" decoding="async" referrerPolicy="no-referrer" />
         </div>
       </div>
     </div>

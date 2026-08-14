@@ -74,7 +74,7 @@ export default function WallpaperModal({ wallpaper, onClose }) {
         <div className="modal-header">
           <h2>{displayTitle}</h2>
           <button className="close-btn" aria-label="Close modal" onClick={() => dialogRef.current.close()}>
-            <X size={24} />
+            <X size={24} aria-hidden="true" />
           </button>
         </div>
 
@@ -88,7 +88,7 @@ export default function WallpaperModal({ wallpaper, onClose }) {
                 className="btn-download" 
                 onClick={() => handleDownload(3840, 2160, '4K')}
               >
-                <Download size={18} />
+                <Download size={18} aria-hidden="true" />
                 <span>4K (3840x2160)</span>
               </button>
               
@@ -96,7 +96,7 @@ export default function WallpaperModal({ wallpaper, onClose }) {
                 className="btn-download" 
                 onClick={() => handleDownload(2560, 1440, '2K')}
               >
-                <Download size={18} />
+                <Download size={18} aria-hidden="true" />
                 <span>2K (2560x1440)</span>
               </button>
               
@@ -104,7 +104,7 @@ export default function WallpaperModal({ wallpaper, onClose }) {
                 className="btn-download" 
                 onClick={() => handleDownload(1920, 1080, '1080p')}
               >
-                <Download size={18} />
+                <Download size={18} aria-hidden="true" />
                 <span>1080p (1920x1080)</span>
               </button>
             </div>

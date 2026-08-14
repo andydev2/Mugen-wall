@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Hero from './components/Hero';
 import Gallery from './components/Gallery';
 import Footer from './components/Footer';
+import ThemeToggle from './components/ThemeToggle';
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -9,6 +10,7 @@ function App() {
 
   return (
     <div className="app-container">
+      <ThemeToggle />
       <header>
         <Hero 
           searchQuery={searchQuery} 

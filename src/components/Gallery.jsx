@@ -239,7 +239,7 @@ export default function Gallery({ searchQuery, activeCategory }) {
             >
               <img 
                 src={wallpaper.thumbs?.large || wallpaper.path} 
-                alt={`Wallpaper ${wallpaper.id}`}
+                alt={wallpaper.title || wallpaper.category || 'Wallpaper'}
                 fetchPriority={index <= 3 ? "high" : "auto"}
                 loading={index <= 3 ? "eager" : "lazy"}
                 decoding="async"
@@ -249,9 +249,9 @@ export default function Gallery({ searchQuery, activeCategory }) {
                 className="gallery-image"
               />
               <div className="gallery-item-overlay">
-                <h3 style={{textTransform: 'capitalize'}}>
+                <h2 style={{textTransform: 'capitalize', margin: '0 0 8px 0', fontSize: '1.2rem', fontWeight: '600'}}>
                   {debouncedSearch ? `${debouncedSearch}` : `${wallpaper.category} Wallpaper`}
-                </h3>
+                </h2>
                 <div className="tags">
                   <span className="tag glass">{wallpaper.resolution || `${wallpaper.dimension_x}x${wallpaper.dimension_y}`}</span>
                   <span className="tag glass">{(wallpaper.file_size / 1024 / 1024).toFixed(1)} MB</span>
@@ -278,6 +278,7 @@ export default function Gallery({ searchQuery, activeCategory }) {
           <button 
             className="pagination-btn glass" 
             disabled={currentPage === 1}
+            aria-label="Previous Page"
             onClick={() => {
               setCurrentPage(prev => Math.max(prev - 1, 1));
               document.querySelector('.gallery-section').scrollIntoView({ behavior: 'smooth' });
@@ -289,6 +290,7 @@ export default function Gallery({ searchQuery, activeCategory }) {
           <button 
             className="pagination-btn glass" 
             disabled={currentPage === totalPages}
+            aria-label="Next Page"
             onClick={() => {
               setCurrentPage(prev => Math.min(prev + 1, totalPages));
               document.querySelector('.gallery-section').scrollIntoView({ behavior: 'smooth' });
