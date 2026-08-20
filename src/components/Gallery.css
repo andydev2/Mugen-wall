@@ -29,6 +29,7 @@
   border-radius: var(--radius-lg);
   background-color: rgba(255, 255, 255, 0.03); /* Placeholder color */
   transform: translateZ(0); /* Fixes border-radius clipping bug in Webkit CSS Columns */
+  -webkit-mask-image: -webkit-radial-gradient(white, black); /* Forces true clipping on hover scale */
   content-visibility: auto;
   contain-intrinsic-size: 1px 400px;
 }
@@ -39,6 +40,7 @@
 }
 
 .gallery-image {
+  display: block; /* Removes inline bottom gap */
   width: 100%;
   height: 100%;
   object-fit: cover;
