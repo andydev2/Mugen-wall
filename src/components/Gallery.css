@@ -21,7 +21,7 @@
   aspect-ratio: 16/9;
   border-radius: var(--radius-lg);
   content-visibility: auto;
-  contain-intrinsic-size: 1px 600px;
+  contain-intrinsic-size: 1px 400px;
 }
 
 .gallery-item.mobile-aspect {
@@ -36,8 +36,10 @@
   will-change: transform;
 }
 
-.gallery-item:hover .gallery-image {
-  transform: scale(1.05);
+@media (hover: hover) {
+  .gallery-item:hover .gallery-image {
+    transform: scale(1.05);
+  }
 }
 
 .gallery-item-overlay {
@@ -53,9 +55,11 @@
   will-change: transform, opacity;
 }
 
-.gallery-item:hover .gallery-item-overlay {
-  transform: translateY(0);
-  opacity: 1;
+@media (hover: hover) {
+  .gallery-item:hover .gallery-item-overlay {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .gallery-item-overlay h2 {

@@ -43,7 +43,7 @@ const GalleryItem = ({ wallpaper, debouncedSearch, index, onOpenModal, activeCat
       }}
     >
       <img 
-        src={wallpaper.thumbs?.original || wallpaper.thumbs?.large || wallpaper.path} 
+        src={wallpaper.thumbs?.large || wallpaper.path} 
         alt={displayTitle}
         fetchPriority={index <= 3 ? "high" : "auto"}
         loading={index <= 3 ? "eager" : "lazy"}
@@ -97,7 +97,7 @@ export default function Gallery({ searchQuery, activeCategory }) {
     const fetchWallpapers = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         let q = '';
         if (debouncedSearch) q += debouncedSearch;
@@ -129,87 +129,13 @@ export default function Gallery({ searchQuery, activeCategory }) {
         if (json.data && json.data.length > 0) {
           dataToSet = json.data;
           newTotalPages = json.meta?.last_page || 1;
-        } else if (q) {
-          // Fallback 1: TMDB
-          const tmdbKey = import.meta.env.VITE_TMDB_API_KEY;
-          let tmdbFound = false;
+        } 
+        
+        if (q) {
 
-          if (tmdbKey) {
-            try {
-              const tmdbUrl = `https://api.themoviedb.org/3/search/multi?api_key=${tmdbKey}&query=${encodeURIComponent(q.trim())}&page=${currentPage}`;
-              const tmdbRes = await fetch(tmdbUrl);
-              if (tmdbRes.ok) {
-                const tmdbJson = await tmdbRes.json();
-                let backdrops = [];
-                
-                tmdbJson.results?.forEach(item => {
-                  const imagePath = activeCategory === 'Mobile' ? item.poster_path : item.backdrop_path;
-                  if (imagePath) {
-                    backdrops.push({
-                       id: `tmdb-${item.id}`,
-                       path: `https://image.tmdb.org/t/p/original${imagePath}`,
-                       thumbs: { large: `https://image.tmdb.org/t/p/w780${imagePath}` },
-                       dimension_x: activeCategory === 'Mobile' ? 2160 : 3840,
-                       dimension_y: activeCategory === 'Mobile' ? 3840 : 2160,
-                       category: item.media_type === 'movie' ? 'Movie' : 'TV Show',
-                       resolution: activeCategory === 'Mobile' ? '2160x3840' : '3840x2160',
-                       file_size: 2000000,
-                       title: item.title || item.name || 'TMDB Image',
-                       stats: {
-                         views: Math.round(item.popularity * 1000) || 0,
-                         likes: item.vote_count || 0,
-                         downloads: 0
-                       }
-                    });
-                  } else if (item.known_for) {
-                    item.known_for.forEach(known => {
-                      const knownPath = activeCategory === 'Mobile' ? known.poster_path : known.backdrop_path;
-                      if (knownPath) {
-                        backdrops.push({
-                           id: `tmdb-${known.id}`,
-                           path: `https://image.tmdb.org/t/p/original${knownPath}`,
-                           thumbs: { large: `https://image.tmdb.org/t/p/w780${knownPath}` },
-                           dimension_x: activeCategory === 'Mobile' ? 2160 : 3840,
-                           dimension_y: activeCategory === 'Mobile' ? 3840 : 2160,
-                           category: 'Actor/Movie',
-                           resolution: activeCategory === 'Mobile' ? '2160x3840' : '3840x2160',
-                           file_size: 2000000,
-                           title: known.title || known.name || 'TMDB Image',
-                           stats: {
-                             views: Math.round(known.popularity * 1000) || 0,
-                             likes: known.vote_count || 0,
-                             downloads: 0
-                           }
-                        });
-                      }
-                    });
-                  }
-                });
 
-                // Remove potential duplicates (if multiple actors are known for the same movie)
-                const uniqueBackdrops = [];
-                const seenIds = new Set();
-                for (const item of backdrops) {
-                  if (!seenIds.has(item.id)) {
-                    seenIds.add(item.id);
-                    uniqueBackdrops.push(item);
-                  }
-                }
-
-                if (uniqueBackdrops.length > 0) {
-                  dataToSet = uniqueBackdrops;
-                  newTotalPages = tmdbJson.total_pages || 1;
-                  tmdbFound = true;
-                }
-              }
-            } catch (err) {
-              console.error("TMDB fallback error:", err);
-            }
-          }
-
-          // Fallback 2: Pixabay (if TMDB found nothing)
-          if (!tmdbFound) {
-            const pixabayKey = import.meta.env.VITE_PIXABAY_API_KEY;
+          // Fallback 2: Pixabay (always merge if searching)
+          const pixabayKey = import.meta.env.VITE_PIXABAY_API_KEY;
             if (pixabayKey) {
               const orientation = activeCategory === 'Mobile' ? 'vertical' : 'horizontal';
               const pxUrl = `https://pixabay.com/api/?key=${pixabayKey}&q=${encodeURIComponent(q.trim())}&image_type=photo&orientation=${orientation}&page=${currentPage}&per_page=24&safesearch=true`;
@@ -218,7 +144,7 @@ export default function Gallery({ searchQuery, activeCategory }) {
                 if (pxResponse.ok) {
                   const pxJson = await pxResponse.json();
                   if (pxJson.hits && pxJson.hits.length > 0) {
-                    dataToSet = pxJson.hits.map(item => ({
+                    const pxData = pxJson.hits.map(item => ({
                       id: `px-${item.id}`,
                       path: item.largeImageURL,
                       thumbs: { large: item.webformatURL },
@@ -234,16 +160,23 @@ export default function Gallery({ searchQuery, activeCategory }) {
                         downloads: item.downloads || 0
                       }
                     }));
-                    newTotalPages = Math.ceil(pxJson.totalHits / 24);
+                    
+                    dataToSet = [...dataToSet, ...pxData];
+                    newTotalPages = Math.max(newTotalPages, Math.ceil(pxJson.totalHits / 24));
                   }
                 }
               } catch (pxErr) {
                 console.error("Pixabay fallback error:", pxErr);
               }
             }
-          }
+          // } -> removed extra brace for tmdbFound
         }
         
+        // Randomize merged results to make it feel natural
+        if (q && dataToSet.length > 0) {
+          dataToSet.sort(() => Math.random() - 0.5);
+        }
+
         if (isMounted) {
           if (activeCategory === 'All' && currentPage > 1) {
             setWallpapers(prev => [...prev, ...dataToSet]);
