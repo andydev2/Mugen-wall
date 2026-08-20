@@ -27,6 +27,8 @@
   cursor: pointer;
   aspect-ratio: 16/9;
   border-radius: var(--radius-lg);
+  background-color: rgba(255, 255, 255, 0.03); /* Placeholder color */
+  transform: translateZ(0); /* Fixes border-radius clipping bug in Webkit CSS Columns */
   content-visibility: auto;
   contain-intrinsic-size: 1px 400px;
 }
@@ -40,6 +42,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: inherit; /* Ensure image respects the rounded corners */
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform;
 }

@@ -32,7 +32,7 @@ const GalleryItem = ({ wallpaper, debouncedSearch, index, onOpenModal, activeCat
   return (
     <a 
       href={`/?w=${wallpaper.id}`}
-      className={`gallery-item glass-card animate-fade-in ${activeCategory === 'Mobile' ? 'mobile-aspect' : ''}`}
+      className={`gallery-item animate-fade-in ${activeCategory === 'Mobile' ? 'mobile-aspect' : ''}`}
       style={{ animationDelay: `${(index % 24) * 0.05}s` }}
       aria-label={`View wallpaper ${wallpaper.id}`}
       onMouseEnter={handleMouseEnter}
