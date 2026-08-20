@@ -32,12 +32,12 @@ export default function Footer() {
         </div>
         
         <div className="footer-links">
-          <a href="https://akira-itzt.vercel.app/" target="_blank" rel="noopener noreferrer" aria-label="Akira's Portfolio" className="portfolio-link">
+          <a href="https://www.akiradev.online/" target="_blank" rel="noopener noreferrer" aria-label="Akira's Portfolio" className="portfolio-link">
             <span>My Portfolio</span>
             <ExternalLink size={16} aria-hidden="true" />
           </a>
           <div className="social-icons">
-            <a href="https://www.instagram.com/akira.shiraishi78/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <a href="https://www.instagram.com/akiradev78/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <InstagramIcon size={20} />
             </a>
             <a href="https://wa.me/593998386973" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">

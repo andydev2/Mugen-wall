@@ -1,8 +1,70 @@
 import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import AdBanner from './AdBanner';
 import './Gallery.css';
 
 const WallpaperModal = lazy(() => import('./WallpaperModal'));
+
+const GalleryItem = ({ wallpaper, debouncedSearch, index, onOpenModal, activeCategory }) => {
+  const [title, setTitle] = useState(wallpaper.title || null);
+  const [hasHovered, setHasHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    if (title || !wallpaper.id || hasHovered) return;
+    setHasHovered(true);
+    
+    if (!wallpaper.id.toString().startsWith('tmdb-') && !wallpaper.id.toString().startsWith('px-')) {
+      fetch(`/api/v1/w/${wallpaper.id}`)
+        .then(res => res.json())
+        .then(json => {
+          if (json.data && json.data.tags && json.data.tags.length > 0) {
+            const tags = json.data.tags.slice(0, 3).map(t => t.name.replace(/\b\w/g, c => c.toUpperCase())).join(' • ');
+            if (tags) setTitle(tags);
+            else setTitle('MugenWall Art');
+          } else {
+            setTitle('MugenWall Art');
+          }
+        })
+        .catch(() => {});
+    }
+  };
+
+  const displayTitle = title || (debouncedSearch ? debouncedSearch : `Wallpaper #${wallpaper.id}`);
+
+  return (
+    <a 
+      href={`/?w=${wallpaper.id}`}
+      className={`gallery-item glass-card animate-fade-in ${activeCategory === 'Mobile' ? 'mobile-aspect' : ''}`}
+      style={{ animationDelay: `${(index % 24) * 0.05}s` }}
+      aria-label={`View wallpaper ${wallpaper.id}`}
+      onMouseEnter={handleMouseEnter}
+      onClick={(e) => {
+        e.preventDefault();
+        window.history.pushState(null, '', `/?w=${wallpaper.id}`);
+        onOpenModal(wallpaper);
+      }}
+    >
+      <img 
+        src={wallpaper.thumbs?.original || wallpaper.thumbs?.large || wallpaper.path} 
+        alt={displayTitle}
+        fetchPriority={index <= 3 ? "high" : "auto"}
+        loading={index <= 3 ? "eager" : "lazy"}
+        decoding="async"
+        referrerPolicy="no-referrer"
+        width={wallpaper.dimension_x}
+        height={wallpaper.dimension_y}
+        className="gallery-image"
+      />
+      <div className="gallery-item-overlay">
+        <h2 style={{textTransform: 'capitalize', margin: '0 0 8px 0', fontSize: '1.2rem', fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
+          {displayTitle}
+        </h2>
+        <div className="tags">
+          <span className="tag glass">{wallpaper.resolution || `${wallpaper.dimension_x}x${wallpaper.dimension_y}`}</span>
+          <span className="tag glass">{(wallpaper.file_size / 1024 / 1024).toFixed(1)} MB</span>
+        </div>
+      </div>
+    </a>
+  );
+};
 
 export default function Gallery({ searchQuery, activeCategory }) {
   const [wallpapers, setWallpapers] = useState([]);
@@ -43,12 +105,15 @@ export default function Gallery({ searchQuery, activeCategory }) {
         let categoryQuery = '111'; // General, Anime, People
         if (activeCategory === 'Anime') {
           categoryQuery = '010'; // Only Anime
-        } else if (activeCategory !== 'All') {
+        } else if (activeCategory !== 'All' && activeCategory !== 'Mobile') {
           q += ` ${activeCategory}`;
         }
 
         const sorting = q ? 'relevance' : 'toplist';
-        const url = `/api/v1/search?q=${encodeURIComponent(q.trim())}&categories=${categoryQuery}&purity=100&sorting=${sorting}&page=${currentPage}`;
+        let url = `/api/v1/search?q=${encodeURIComponent(q.trim())}&categories=${categoryQuery}&purity=100&sorting=${sorting}&page=${currentPage}`;
+        if (activeCategory === 'Mobile') {
+          url += '&ratios=portrait';
+        }
         
         const response = await fetch(url);
         if (!response.ok) {
@@ -78,31 +143,43 @@ export default function Gallery({ searchQuery, activeCategory }) {
                 let backdrops = [];
                 
                 tmdbJson.results?.forEach(item => {
-                  if (item.backdrop_path) {
+                  const imagePath = activeCategory === 'Mobile' ? item.poster_path : item.backdrop_path;
+                  if (imagePath) {
                     backdrops.push({
                        id: `tmdb-${item.id}`,
-                       path: `https://image.tmdb.org/t/p/original${item.backdrop_path}`,
-                       thumbs: { large: `https://image.tmdb.org/t/p/w780${item.backdrop_path}` },
-                       dimension_x: 3840,
-                       dimension_y: 2160,
+                       path: `https://image.tmdb.org/t/p/original${imagePath}`,
+                       thumbs: { large: `https://image.tmdb.org/t/p/w780${imagePath}` },
+                       dimension_x: activeCategory === 'Mobile' ? 2160 : 3840,
+                       dimension_y: activeCategory === 'Mobile' ? 3840 : 2160,
                        category: item.media_type === 'movie' ? 'Movie' : 'TV Show',
-                       resolution: '3840x2160',
+                       resolution: activeCategory === 'Mobile' ? '2160x3840' : '3840x2160',
                        file_size: 2000000,
-                       title: item.title || item.name || 'TMDB Image'
+                       title: item.title || item.name || 'TMDB Image',
+                       stats: {
+                         views: Math.round(item.popularity * 1000) || 0,
+                         likes: item.vote_count || 0,
+                         downloads: 0
+                       }
                     });
                   } else if (item.known_for) {
                     item.known_for.forEach(known => {
-                      if (known.backdrop_path) {
+                      const knownPath = activeCategory === 'Mobile' ? known.poster_path : known.backdrop_path;
+                      if (knownPath) {
                         backdrops.push({
                            id: `tmdb-${known.id}`,
-                           path: `https://image.tmdb.org/t/p/original${known.backdrop_path}`,
-                           thumbs: { large: `https://image.tmdb.org/t/p/w780${known.backdrop_path}` },
-                           dimension_x: 3840,
-                           dimension_y: 2160,
+                           path: `https://image.tmdb.org/t/p/original${knownPath}`,
+                           thumbs: { large: `https://image.tmdb.org/t/p/w780${knownPath}` },
+                           dimension_x: activeCategory === 'Mobile' ? 2160 : 3840,
+                           dimension_y: activeCategory === 'Mobile' ? 3840 : 2160,
                            category: 'Actor/Movie',
-                           resolution: '3840x2160',
+                           resolution: activeCategory === 'Mobile' ? '2160x3840' : '3840x2160',
                            file_size: 2000000,
-                           title: known.title || known.name || 'TMDB Image'
+                           title: known.title || known.name || 'TMDB Image',
+                           stats: {
+                             views: Math.round(known.popularity * 1000) || 0,
+                             likes: known.vote_count || 0,
+                             downloads: 0
+                           }
                         });
                       }
                     });
@@ -134,7 +211,8 @@ export default function Gallery({ searchQuery, activeCategory }) {
           if (!tmdbFound) {
             const pixabayKey = import.meta.env.VITE_PIXABAY_API_KEY;
             if (pixabayKey) {
-              const pxUrl = `https://pixabay.com/api/?key=${pixabayKey}&q=${encodeURIComponent(q.trim())}&image_type=photo&orientation=horizontal&page=${currentPage}&per_page=24&safesearch=true`;
+              const orientation = activeCategory === 'Mobile' ? 'vertical' : 'horizontal';
+              const pxUrl = `https://pixabay.com/api/?key=${pixabayKey}&q=${encodeURIComponent(q.trim())}&image_type=photo&orientation=${orientation}&page=${currentPage}&per_page=24&safesearch=true`;
               try {
                 const pxResponse = await fetch(pxUrl);
                 if (pxResponse.ok) {
@@ -150,6 +228,11 @@ export default function Gallery({ searchQuery, activeCategory }) {
                       resolution: `${item.imageWidth}x${item.imageHeight}`,
                       file_size: item.imageSize,
                       title: item.tags,
+                      stats: {
+                        views: item.views || 0,
+                        likes: item.likes || 0,
+                        downloads: item.downloads || 0
+                      }
                     }));
                     newTotalPages = Math.ceil(pxJson.totalHits / 24);
                   }
@@ -248,48 +331,22 @@ export default function Gallery({ searchQuery, activeCategory }) {
 
   return (
     <section className="gallery-section">
-      <AdBanner format="horizontal" />
 
       {error && <div className="no-results" style={{color: '#ff6b6b'}}>{error}</div>}
       
-      <div className="gallery-grid">
+      <div className={`gallery-grid ${activeCategory === 'Mobile' ? 'mobile-grid' : ''}`}>
         {!isLoading && wallpapers.length === 0 && !error ? (
           <div className="no-results">No wallpapers found. Try a different search or category.</div>
         ) : (
           wallpapers.map((wallpaper, index) => (
-            <a 
-              href={`/?w=${wallpaper.id}`}
+            <GalleryItem 
               key={`${wallpaper.id}-${index}`} 
-              className="gallery-item glass-card animate-fade-in"
-              style={{ animationDelay: `${(index % 24) * 0.05}s` }}
-              aria-label={`View wallpaper ${wallpaper.id}`}
-              onClick={(e) => {
-                e.preventDefault();
-                window.history.pushState(null, '', `/?w=${wallpaper.id}`);
-                handleOpenModal(wallpaper);
-              }}
-            >
-              <img 
-                src={wallpaper.thumbs?.large || wallpaper.path} 
-                alt={wallpaper.title || wallpaper.category || 'Wallpaper'}
-                fetchPriority={index <= 3 ? "high" : "auto"}
-                loading={index <= 3 ? "eager" : "lazy"}
-                decoding="async"
-                referrerPolicy="no-referrer"
-                width={wallpaper.dimension_x}
-                height={wallpaper.dimension_y}
-                className="gallery-image"
-              />
-              <div className="gallery-item-overlay">
-                <h2 style={{textTransform: 'capitalize', margin: '0 0 8px 0', fontSize: '1.2rem', fontWeight: '600'}}>
-                  {debouncedSearch ? `${debouncedSearch}` : `${wallpaper.category} Wallpaper`}
-                </h2>
-                <div className="tags">
-                  <span className="tag glass">{wallpaper.resolution || `${wallpaper.dimension_x}x${wallpaper.dimension_y}`}</span>
-                  <span className="tag glass">{(wallpaper.file_size / 1024 / 1024).toFixed(1)} MB</span>
-                </div>
-              </div>
-            </a>
+              wallpaper={wallpaper} 
+              debouncedSearch={debouncedSearch} 
+              index={index} 
+              onOpenModal={handleOpenModal} 
+              activeCategory={activeCategory}
+            />
           ))
         )}
       </div>
@@ -338,6 +395,7 @@ export default function Gallery({ searchQuery, activeCategory }) {
           <WallpaperModal 
             wallpaper={selectedWallpaper} 
             onClose={handleCloseModal} 
+            activeCategory={activeCategory}
           />
         </Suspense>
       )}

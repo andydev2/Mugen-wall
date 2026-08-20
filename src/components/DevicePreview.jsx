@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Monitor, Smartphone, Tablet } from 'lucide-react';
 import './DevicePreview.css';
 
-export default function DevicePreview({ imageUrl, title }) {
-  const [device, setDevice] = useState('desktop'); // 'desktop', 'tablet', 'mobile'
+export default function DevicePreview({ imageUrl, title, device, setDevice }) {
 
   return (
     <div className="device-preview-container">

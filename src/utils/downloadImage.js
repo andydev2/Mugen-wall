@@ -43,7 +43,7 @@ export const downloadImage = async (url, title, width, height, qualityName) => {
           0, 0, width, height
         );
         
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+        const dataUrl = canvas.toDataURL('image/jpeg', 1.0);
         
         const link = document.createElement('a');
         link.download = `${title.replace(/\s+/g, '_').toLowerCase()}_${qualityName}.jpg`;

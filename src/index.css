@@ -109,13 +109,32 @@ button {
   backdrop-filter: blur(8px);
   border: 1px solid var(--glass-card-border);
   border-radius: var(--radius-lg);
-  transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+  position: relative;
+  z-index: 1;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  background: var(--glass-card-bg-hover);
+  border: 1px solid var(--glass-card-border-hover);
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity;
+  z-index: -1;
+  pointer-events: none;
 }
 
 .glass-card:hover {
   transform: translateY(-4px);
-  background: var(--glass-card-bg-hover);
-  border-color: var(--glass-card-border-hover);
+}
+
+.glass-card:hover::before {
+  opacity: 1;
 }
 
 /* Animations */

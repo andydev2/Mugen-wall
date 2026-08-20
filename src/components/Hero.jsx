@@ -3,7 +3,7 @@ import { Search } from 'lucide-react';
 import './Hero.css';
 
 export default function Hero({ searchQuery, setSearchQuery, activeCategory, setActiveCategory }) {
-  const categories = ['All', 'Anime', 'Cars', 'Lo-Fi', 'Minimalist', 'Abstract', 'Nature', 'Sci-Fi'];
+  const categories = ['All', 'Mobile', 'Anime', 'Cars', 'Lo-Fi', 'Minimalist', 'Abstract', 'Nature', 'Sci-Fi'];
 
   return (
     <section className="hero-section">

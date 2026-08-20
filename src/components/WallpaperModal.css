@@ -108,4 +108,74 @@
   .btn-download {
     width: 100%;
   }
+
+  .modal-preview-wrapper {
+    order: 1;
+  }
+  
+  .wallpaper-stats {
+    order: 2;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 0;
+  }
+  
+  .download-section {
+    order: 3;
+  }
+  
+  .stat-views {
+    margin-left: 0;
+  }
+}
+
+.wallpaper-stats {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: -10px;
+}
+
+.stat-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--glass-card-bg);
+  border: 1px solid var(--glass-card-border);
+  color: var(--color-primary);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.stat-btn:hover {
+  background: var(--color-surface-hover);
+  transform: translateY(-2px);
+}
+
+.active-like {
+  color: #ff4757;
+  border-color: #ff4757;
+  background: rgba(255, 71, 87, 0.1);
+}
+
+.active-dislike {
+  color: #57606f;
+  border-color: #57606f;
+  background: rgba(87, 96, 111, 0.1);
+}
+
+.stat-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-secondary);
+  font-weight: 500;
+}
+
+.stat-views {
+  margin-left: auto;
 }
