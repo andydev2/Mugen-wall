@@ -43,7 +43,7 @@ const GalleryItem = ({ wallpaper, debouncedSearch, index, onOpenModal, activeCat
       }}
     >
       <img 
-        src={wallpaper.thumbs?.large || wallpaper.path} 
+        src={activeCategory === 'Mobile' ? wallpaper.path : (wallpaper.thumbs?.large || wallpaper.path)} 
         alt={displayTitle}
         fetchPriority={index <= 3 ? "high" : "auto"}
         loading={index <= 3 ? "eager" : "lazy"}
