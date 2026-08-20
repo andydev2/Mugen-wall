@@ -11,7 +11,14 @@
 }
 
 .gallery-grid.mobile-grid {
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  display: block;
+  column-count: 4;
+  column-gap: 24px;
+}
+
+.gallery-grid.mobile-grid .gallery-item {
+  break-inside: avoid;
+  margin-bottom: 24px;
 }
 
 .gallery-item {
@@ -25,7 +32,8 @@
 }
 
 .gallery-item.mobile-aspect {
-  aspect-ratio: 9/16;
+  aspect-ratio: auto;
+  content-visibility: visible; /* Prevents column reshuffling on scroll */
 }
 
 .gallery-image {
@@ -88,7 +96,7 @@
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
   .gallery-grid.mobile-grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    column-count: 3;
   }
 }
 
@@ -97,8 +105,11 @@
     grid-template-columns: 1fr;
   }
   .gallery-grid.mobile-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    column-count: 2;
+    column-gap: 12px;
+  }
+  .gallery-grid.mobile-grid .gallery-item {
+    margin-bottom: 12px;
   }
 }
 
