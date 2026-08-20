@@ -43,7 +43,7 @@ const GalleryItem = ({ wallpaper, debouncedSearch, index, onOpenModal, activeCat
       }}
     >
       <img 
-        src={(activeCategory === 'Mobile' ? wallpaper.path : (wallpaper.thumbs?.large || wallpaper.path)).replace('https://w.wallhaven.cc', '/w-image')} 
+        src={activeCategory === 'Mobile' ? wallpaper.path : (wallpaper.thumbs?.large || wallpaper.path)} 
         alt={displayTitle}
         fetchPriority={index <= 3 ? "high" : "auto"}
         loading={index <= 3 ? "eager" : "lazy"}

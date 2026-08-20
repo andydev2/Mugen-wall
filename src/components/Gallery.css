@@ -32,7 +32,6 @@
   border: 1px solid rgba(255, 255, 255, 0.05); /* Restored premium border */
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Restored shadow */
   transform: translateZ(0); /* Fixes border-radius clipping bug in Webkit CSS Columns */
-  clip-path: inset(0 round var(--radius-lg)); /* Bulletproof fix for hover scale clipping out of bounds */
   content-visibility: auto;
   contain-intrinsic-size: 1px 400px;
 }
